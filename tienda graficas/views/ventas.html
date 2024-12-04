@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ventas Realizadas</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <header>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/inventario">Inventario</a>
+      <a href="/ventas">Ventas</a>
+      <a href="/proveedores">Proveedores</a>
+      <a href="/registrar_venta">Registrar Venta</a>
+      <a href="/logout">Cerrar Sesión</a>
+    </nav>
+  </header>
+
+  <h1>Ventas Realizadas</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID Venta</th>
+        <th>ID Producto</th>
+        <th>Cantidad Vendida</th>
+        <th>Total ($)</th>
+      </tr>
+    </thead>
+    <tbody id="ventas-body">
+      <!-- Aquí se cargarán dinámicamente las filas de las ventas -->
+    </tbody>
+  </table>
+
+  <script>
+    async function cargarVentas() {
+      try {
+        const respuesta = await fetch('/api/ventas', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!respuesta.ok) {
+          throw new Error('Error al cargar las ventas');
+        }
+
+        const ventas = await respuesta.json();
+        const tbody = document.getElementById('ventas-body');
+        tbody.innerHTML = '';
+
+        ventas.forEach(venta => {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+            <td>${venta.id}</td>
+            <td>${venta.id_producto}</td>
+            <td>${venta.cantidad}</td>  <!-- Asegúrate de que la propiedad esté correctamente llamada -->
+            <td>${venta.total} USD</td>
+          `;
+          tbody.appendChild(fila);
+        });
+      } catch (error) {
+        console.error(error);
+        alert('No se pudieron cargar las ventas.');
+      }
+    }
+
+    window.onload = cargarVentas;
+  </script>
+
+</body>
+</html>
